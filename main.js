@@ -2,6 +2,11 @@
 
 window.addEventListener("load", initApp);
 
+let min = 0;
+let max = 100;
+let middle;
+let guessCount = 0;
+
 function initApp() {
   document.querySelector("#start").addEventListener("click", startGame);
   document.querySelector("#high").addEventListener("click", sayTooHigh);
@@ -22,8 +27,25 @@ function startGame() {
 }
 
 function guess() {
-  let guessNumber = Math.floor(Math.random() * 100);
-  displayGuess(guessNumber);
+  guessCount++;
+  middle = Math.floor((max + min) / 2);
+  console.log("min: " + min, "max: " + max, "guess: " + middle);
+
+  if (min > max) {
+    displayLie();
+  } else {
+    displayGuess(middle);
+  }
+}
+
+function displayLie() {
+  document.querySelector("#guess").insertAdjacentHTML(
+    "beforeend",
+    /*HTML*/ `
+    <h3 class="blue">Sherlock: Stop the cap rn!</h3>
+    `
+  );
+  endGame();
 }
 
 function displayGuess(guessNumber) {
@@ -42,6 +64,8 @@ function sayTooLow() {
     <h3 class="red">User: That was too low!</h3>
     `
   );
+
+  min = middle + 1;
   guess();
 }
 
@@ -52,6 +76,7 @@ function sayTooHigh() {
     <h3 class="red">User: That was too high!</h3>
     `
   );
+  max = middle - 1;
   guess();
 }
 
@@ -60,12 +85,17 @@ function sayCorrect() {
     "beforeend",
     /*HTML*/ `
     <h3 class="green">User: You got it!</h3>
+    <h3 class="blue">Sherlock: It took me ${guessCount} guesses to figure it out</h3>
     `
   );
   endGame();
 }
 
 function endGame() {
+  min = 0;
+  max = 100;
+  guessCount = 0;
+
   document.querySelector("#start").classList.remove("hidden");
   document.querySelector("#high").classList.add("hidden");
   document.querySelector("#low").classList.add("hidden");
